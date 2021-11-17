@@ -45,18 +45,21 @@ function splitString(str) {
   return arr;
 }
 
-function hashNumSum(hash) {
-  return hash.match(/\d+/g).reduce(
-    (x, y) => parseInt(x) + parseInt(y),
-    0
-  )
+// Add up all the numbers in the hash
+function hashNumber(hash) {
+  return {
+    sum: hash.match(/\d+/g).reduce(
+          (x, y) => parseInt(x) + parseInt(y),
+          0
+        ),
+    values: hash.match(/\d+/g)
+  }
 }
 
 // write a function to wrap text within a box in canvas
 function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
   var words = text.split(' ');
   var line = '';
-  var lines = 0;
   for(var n = 0; n < words.length; n++) {
     var testLine = line + words[n] + ' ';
     var metrics = ctx.measureText(testLine);
@@ -65,13 +68,10 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
       ctx.fillText(line, x, y);
       line = words[n] + ' ';
       y += lineHeight;
-      lines += 1;
-
     } else {
       line = testLine;
     }
   }
-  console.log('dd ',lines)
   ctx.fillText(line, x, y);
 }
 
@@ -99,39 +99,55 @@ function getLineCount(ctx, text, maxWidth, lineHeight) {
   return lines;
 }
 
-var fullHash = splitString(fxhash).toString().replace(/,/g,' ');
-var hashNum = hashNumSum(fullHash);
+var fullHash = splitString(fxhash)
+                .toString()
+                .replace(/,/g, ' ');
+console.log('fullHash ', fullHash);
 
-var lineH = hashNum;
-var fontSize = hashNum;
+var hashText = splitString(fxhash)
+                .toString()
+                .replace(/\d+,/g, '')
+                .replace(/,/g,' ');
+console.log('hashText ', hashText);
+
+var hashNumbers = hashNumber(fullHash).values;
+console.log('hashNumbers ', hashNumbers);
+
+var hashNumSum = hashNumber(fullHash).sum;
+console.log('hashNumSum ', hashNumSum);
 
 // draw
 function draw() {
   var ctx = canvas.getContext('2d');
+
+  var lineH = (window.innerHeight*2)/hashNumSum;
+  var fontSize = lineH;
+
   ctx.font = fontSize+"px Tahoma";
+  ctx.textAlign = "center";
 
   // set box width & height
   var boxW = canvas.width / 2;
-  var lineCount = getLineCount(ctx, fullHash, boxW, lineH);
+  var lineCount = getLineCount(ctx, hashText, boxW, lineH);
   var boxH = lineCount * lineH;
 
   // get exact center
-  var centerX = (canvas.width / 2) - (boxW / 2);
+  var centerX = (canvas.width / 2) ;
   var centerY = (canvas.height / 2) - (boxH / 2);
 
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   ctx.fillStyle = 'white'
-  wrapText(ctx, fullHash, centerX, centerY, boxW, lineH);
+  wrapText(ctx, hashText, centerX, centerY, boxW, lineH);
 }
 
+// On page resize
 window.onresize = function() {
-
   init();
   draw();
-
 }
 
+// START
 init();
 draw();
