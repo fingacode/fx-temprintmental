@@ -56,14 +56,31 @@ function hashNumber(hash) {
   }
 }
 
+/* function to creates a colour given number input */
+function createColor(number) {
+  var color = '#';
+  var hex = number.toString(16);
+  for (var i = 0; i < 6 - hex.length; i++) {
+    color += '0';
+  }
+  color += hex;
+  console.log(color)
+  return color;
+}
+
 // write a function to wrap text within a box in canvas
-function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+function wrapText(ctx, text, x, y, maxWidth, lineHeight, hashNumSum = 0) {
   var words = text.split(' ');
   var line = '';
   for(var n = 0; n < words.length; n++) {
     var testLine = line + words[n] + ' ';
     var metrics = ctx.measureText(testLine);
     var boxWidth = metrics.width;
+
+    // console.log(createColor(n))
+
+    ctx.fillStyle = `${createColor((n*hashNumSum))}`;
+
     if ( boxWidth > maxWidth && n > 0 ) {
       ctx.fillText(line, x, y);
       line = words[n] + ' ';
@@ -107,7 +124,8 @@ console.log('fullHash ', fullHash);
 var hashText = splitString(fxhash)
                 .toString()
                 .replace(/\d+,/g, '')
-                .replace(/,/g,' ');
+                .replace(/,/g,' ')
+                .toUpperCase();
 console.log('hashText ', hashText);
 
 var hashNumbers = hashNumber(fullHash).values;
@@ -120,14 +138,14 @@ console.log('hashNumSum ', hashNumSum);
 function draw() {
   var ctx = canvas.getContext('2d');
 
-  var lineH = (window.innerHeight*2)/hashNumSum;
+  var lineH = (canvas.height*1.2)/hashNumSum;
   var fontSize = lineH;
 
-  ctx.font = fontSize+"px Tahoma";
+  ctx.font = fontSize+"px Impact";
   ctx.textAlign = "center";
 
   // set box width & height
-  var boxW = canvas.width / 2;
+  var boxW = canvas.width / 3;
   var lineCount = getLineCount(ctx, hashText, boxW, lineH);
   var boxH = lineCount * lineH;
 
@@ -138,8 +156,7 @@ function draw() {
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  ctx.fillStyle = 'white'
-  wrapText(ctx, hashText, centerX, centerY, boxW, lineH);
+  wrapText(ctx, hashText, centerX, centerY, boxW, lineH, hashNumSum);
 }
 
 // On page resize
