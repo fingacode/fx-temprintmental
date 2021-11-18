@@ -26,6 +26,7 @@ console.log(fxhash)   // the 64 chars hex number fed to your algorithm
 
 // init canvas
 var canvas = document.createElement('canvas');
+var outlinedText = false;
 
 function init() {
   canvas.width = 800;
@@ -90,18 +91,20 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight, hashNumSum = 0) {
     var metrics = ctx.measureText(testLine);
     var boxWidth = Math.abs(metrics.actualBoundingBoxLeft) + Math.abs(metrics.actualBoundingBoxRight);
 
-    ctx.fillStyle = `${createColor(n*hashNumSum*words.length)}`;
+    var color = `${createColor(n*hashNumSum*words.length)}`;
+    ctx.fillStyle = color;
 
     if ( boxWidth > maxWidth && n > 0 ) {
 
-      if(isOdd(hashNumSum * n)) {
+      if(isOdd(hashNumSum)) {
 
         ctx.fillText(line, x, y);
 
       } else {
 
-        ctx.strokeStyle = `${createColor(n*hashNumSum*words.length)}`;
+        ctx.strokeStyle = color;
         ctx.strokeText(line, x, y);
+        outlinedText = true;
 
       }
 
@@ -221,12 +224,13 @@ function draw() {
   }
 
   window.$fxhashFeatures = {
-    "Font Size": fontSize,
+    "Font Size": `${fontSize}px`,
+    "Outlined Text": outlinedText,
     "Duplicates": duplicated ? hashNumbers.length : 0,
     "Hash Number Sum": hashNumSum,
   }
 
-  // console.table($fxhashFeatures);
+  console.table($fxhashFeatures);
 
 }
 
