@@ -32,8 +32,8 @@ console.log(fxhash)   // the 64 chars hex number fed to your algorithm
 var canvas = document.createElement('canvas');
 
 function init() {
-  canvas.width = 800//window.innerHeight;
-  canvas.height = 900//window.innerHeight;
+  canvas.width = 800//window.innerWidth;
+  canvas.height = 800//window.innerHeight;
   document.body.appendChild(canvas);
 }
 
@@ -45,6 +45,20 @@ function splitString(str) {
   return arr;
 }
 
+function removeDuplicates(array) {
+  var i,
+    len = array.length,
+    out = [],
+    obj = {};
+  for (i = 0; i < len; i++) {
+    obj[array[i]] = 0;
+  }
+  for (i in obj) {
+    out.push(i);
+  }
+  return out;
+}
+
 // Add up all the numbers in the hash
 function hashNumber(hash) {
   return {
@@ -52,7 +66,7 @@ function hashNumber(hash) {
           (x, y) => parseInt(x) + parseInt(y),
           0
         ),
-    values: hash.match(/\d+/g)
+    values: removeDuplicates(hash.match(/\d+/g))
   }
 }
 
@@ -61,7 +75,7 @@ function createColor(number) {
   var color = '#';
   var hex = number.toString(16);
   for (var i = 0; i < 5 - hex.length; i++) {
-    color += 'ff';
+    color += 'f0';
   }
   color += hex;
   return color;
@@ -80,17 +94,17 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight, hashNumSum = 0) {
     var metrics = ctx.measureText(testLine);
     var boxWidth = Math.abs(metrics.actualBoundingBoxLeft) + Math.abs(metrics.actualBoundingBoxRight);
 
-    ctx.fillStyle = `${createColor( n*hashNumSum*words.length)}`;
+    ctx.fillStyle = `${createColor(n*hashNumSum*words.length)}`;
 
     if ( boxWidth > maxWidth && n > 0 ) {
 
-      if(isOdd(hashNumSum)) {
+      if(isOdd(hashNumSum * n)) {
 
         ctx.fillText(line, x, y);
 
       } else {
 
-        ctx.strokeStyle = `${createColor((n*hashNumSum*words.length))}`;
+        ctx.strokeStyle = `${createColor(n*hashNumSum*words.length)}`;
         ctx.strokeText(line, x, y);
 
       }
@@ -167,7 +181,7 @@ console.log('hashNumSum ', hashNumSum);
 function draw() {
   var ctx = canvas.getContext('2d');
 
-  var lineH = (canvas.height*4)/hashNumSum;
+  var lineH = Math.sqrt( (canvas.height*2) / hashNumSum ) * hashNumSum;
   var fontSize = lineH;
 
   console.log('fontSize', fontSize);
@@ -176,28 +190,31 @@ function draw() {
   ctx.textAlign = "center";
 
   // set box width & height
-  var boxW = canvas.width - 200;
+  var boxW = canvas.width - 150;
   var lineCount = getLineCount(ctx, fullHash, boxW, lineH);
-  var boxH = lineCount * lineH;
+  var boxH = Math.round(lineCount * lineH);
 
   console.log('boxH ',boxH)
+  console.log('lineCount ',lineCount)
+
 
   // get exact center
   var centerX = (canvas.width / 2);
   var centerY = (canvas.height / 2) - (boxH / 2);
 
-  ctx.fillStyle = '#222';
+  ctx.fillStyle = '#111';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  if(isOdd(lineCount * lineH)) {
+  if(isOdd(lineCount)) {
 
     wrapText(ctx, fullHash, centerX, centerY, boxW, lineH, hashNumSum);
 
   } else {
     
-    hashNumbers.forEach((element,i) => {
+    hashNumbers
+    .forEach((element,i) => {
 
-      var newCenterY = (lineH * element);
+      var newCenterY = (canvas.height/2) - (lineH * element);
       wrapText(ctx, fullHash, centerX, newCenterY, boxW, lineH, hashNumSum);
 
     });
