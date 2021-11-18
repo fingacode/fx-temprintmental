@@ -227,10 +227,9 @@ function draw() {
     "Font Size": `${fontSize}px`,
     "Outlined Text": outlinedText,
     "Duplicates": duplicated ? hashNumbers.length : 0,
-    "Hash Number Sum": hashNumSum,
   }
 
-  console.table($fxhashFeatures);
+  // console.table($fxhashFeatures);
 
 }
 
