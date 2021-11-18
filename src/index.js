@@ -14,11 +14,7 @@ console.log(fxhash)   // the 64 chars hex number fed to your algorithm
 // More about it in the guide, section features:
 // [https://fxhash.xyz/articles/guide-mint-generative-token#features]
 //
-// window.$fxhashFeatures = {
-//   "Background": "Black",
-//   "Number of lines": 10,
-//   "Inverted": true
-// }
+
 
 // this code writes the values to the DOM as an example
 // const container = document.createElement("div")
@@ -32,8 +28,8 @@ console.log(fxhash)   // the 64 chars hex number fed to your algorithm
 var canvas = document.createElement('canvas');
 
 function init() {
-  canvas.width = 800//window.innerWidth;
-  canvas.height = 800//window.innerHeight;
+  canvas.width = 800;
+  canvas.height = 800;
   document.body.appendChild(canvas);
 }
 
@@ -162,29 +158,31 @@ var fullHash = splitString(fxhash)
                 .toString()
                 .replace(/,/g, ' ')
                 .toUpperCase();
-console.log('fullHash ', fullHash);
+// console.log('fullHash ', fullHash);
 
 var hashText = splitString(fxhash)
                 .toString()
                 .replace(/\d+,/g, '')
                 .replace(/,/g,' ')
                 .toUpperCase();
-console.log('hashText ', hashText);
+// console.log('hashText ', hashText);
 
 var hashNumbers = hashNumber(fullHash).values;
-console.log('hashNumbers ', hashNumbers);
+// console.log('hashNumbers ', hashNumbers);
 
 var hashNumSum = hashNumber(fullHash).sum;
-console.log('hashNumSum ', hashNumSum);
+// console.log('hashNumSum ', hashNumSum);
 
 // draw
 function draw() {
   var ctx = canvas.getContext('2d');
 
-  var lineH = Math.sqrt( (canvas.height*2) / hashNumSum ) * hashNumSum;
-  var fontSize = lineH;
+  var duplicated = false;
 
-  console.log('fontSize', fontSize);
+  var lineH = Math.round(Math.sqrt( (canvas.height*2) / hashNumSum ) * hashNumSum);
+  var fontSize = lineH;
+  
+  // console.log('fontSize', fontSize);
 
   ctx.font = fontSize+"px Impact, sans-serif";
   ctx.textAlign = "center";
@@ -194,9 +192,8 @@ function draw() {
   var lineCount = getLineCount(ctx, fullHash, boxW, lineH);
   var boxH = Math.round(lineCount * lineH);
 
-  console.log('boxH ',boxH)
-  console.log('lineCount ',lineCount)
-
+  // console.log('boxH ',boxH)
+  // console.log('lineCount ',lineCount)
 
   // get exact center
   var centerX = (canvas.width / 2);
@@ -210,6 +207,8 @@ function draw() {
     wrapText(ctx, fullHash, centerX, centerY, boxW, lineH, hashNumSum);
 
   } else {
+
+    duplicated = true;
     
     hashNumbers
     .forEach((element,i) => {
@@ -221,12 +220,14 @@ function draw() {
 
   }
 
-}
+  window.$fxhashFeatures = {
+    "Font Size": fontSize,
+    "Duplicates": duplicated ? hashNumbers.length : 0,
+    "Hash Number Sum": hashNumSum,
+  }
 
-// On page resize
-window.onresize = function() {
-  init();
-  draw();
+  // console.table($fxhashFeatures);
+
 }
 
 // START
