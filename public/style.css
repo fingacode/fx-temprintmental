@@ -1,5 +1,6 @@
 body, html {
   overflow: hidden;
+  background-color: #000;
 }
 
 /* http://meyerweb.com/eric/tools/css/reset/ 
@@ -49,4 +50,13 @@ q:before, q:after {
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
 }
