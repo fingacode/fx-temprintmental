@@ -187,7 +187,7 @@ function draw() {
   
   // console.log('fontSize', fontSize);
 
-  ctx.font = fontSize+"px Impact, sans-serif";
+  ctx.font = fontSize+"px NewImpact, sans-serif";
   ctx.textAlign = "center";
 
   // set box width & height
@@ -233,6 +233,9 @@ function draw() {
 
 }
 
+window.onload = function(){
 // START
 init();
 draw();
+}
+

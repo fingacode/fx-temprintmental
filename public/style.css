@@ -60,3 +60,14 @@ canvas {
   bottom: 0;
   margin: auto;
 }
+
+@font-face {
+    font-family: 'NewImpact';
+    src: url('./font/Impact.eot');
+    src: url('./font/Impact.eot?#iefix') format('embedded-opentype'),
+        url('./font/Impact.woff2') format('woff2'),
+        url('./font/Impact.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
